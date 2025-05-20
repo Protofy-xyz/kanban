@@ -80,4 +80,28 @@ export class TicketsModel extends ProtoModel<TicketsModel> {
     static load(data: any, session?: SessionDataType): TicketsModel {
         return this._newInstance(data, session);
     }
+
+    static getStatusList(): string[] {
+        return this.getObjectSchema().getFieldDefinition("status").options?.map(
+            (option: z.ZodLiteral<string>) => option.value
+        );
+    }
+
+    static getStatusTheme(status: string) {
+        switch (status) {
+            case "todo":
+                return "blue"
+            case "impeded":
+                return "red"
+            case "in-progress":
+                return "yellow"
+            case "testing":
+                return "orange"
+            case "done":
+                return "green"
+            case "backlog":
+            default:
+                return undefined
+        }
+    }
 }
