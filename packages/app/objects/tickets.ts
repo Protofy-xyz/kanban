@@ -81,6 +81,31 @@ export class TicketsModel extends ProtoModel<TicketsModel> {
         return this._newInstance(data, session);
     }
 
+    static getPriorityIcon(priority: string) {
+        switch (priority) {
+            case "low":
+                return "💧"
+            case "medium":
+                return "🔥"
+            case "high":
+                return "🔥🔥"
+            case "urgent":
+                return "🚨"
+            default:
+                return "❔"
+        }
+    }
+
+    static getFibonacciList(): number[] {
+        return [1, 2, 3, 5, 8, 13]
+    }
+
+    static getPriorityList(): string[] {
+        return this.getObjectSchema().getFieldDefinition("priority").innerType.options?.map(
+            (option: z.ZodLiteral<string>) => option.value
+        );
+    }
+
     static getStatusList(): string[] {
         return this.getObjectSchema().getFieldDefinition("status").options?.map(
             (option: z.ZodLiteral<string>) => option.value

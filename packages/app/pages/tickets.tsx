@@ -64,6 +64,7 @@ export default {
                 model={Objects.tickets}
                 defaultView='sequence'
                 disableViews={["grid", "raw"]}
+                objectProps={{ title: "" }}
                 pageState={pageState}
                 icons={Icons}
                 hideFilters={false}
@@ -100,7 +101,64 @@ export default {
                                 </XStack>
                             </XStack>
                         }
-                    }
+                    },
+                    "priority": {
+                        hideLabel: false,
+                        component: (path, data, setData, mode, originalData, setFormData) => {
+                            const isSelected = (p) => {
+                                return data == p
+                            }
+                            const onSelect = (p) => {
+                                if (isSelected(p)) {
+                                    setData(undefined)
+                                } else {
+                                    setData(p)
+                                }
+                            }
+
+                            return <Tinted>
+                                <XStack gap="$2" ai="center" f={1}>
+                                    {TicketsModel.getPriorityList().map((p) => <div title={p}><Button
+                                        hoverStyle={{ elevation: 5, scale: 1.01 }} pressStyle={{ elevation: 0.01 }}
+                                        onPress={() => onSelect(p)}
+                                        bc={isSelected(p) ? "$color7" : "$color4"}
+                                        circular
+                                    >
+                                        {TicketsModel.getPriorityIcon(p)}
+                                    </Button></div>)}
+                                </XStack>
+                            </Tinted>
+                        }
+                    },
+                    "points": {
+                        hideLabel: false,
+                        component: (path, data, setData, mode, originalData, setFormData) => {
+                            const isSelected = (p) => {
+                                return data == p
+                            }
+                            const onSelect = (p) => {
+                                if (isSelected(p)) {
+                                    setData(undefined)
+                                } else {
+                                    setData(p)
+                                }
+                            }
+
+                            return <Tinted>
+                                <XStack gap="$2" ai="center" f={1}>
+                                    {TicketsModel.getFibonacciList().map((p) => <Button
+                                        hoverStyle={{ elevation: 5, scale: 1.01 }} pressStyle={{ elevation: 0.01 }}
+                                        onPress={() => onSelect(p)}
+                                        bc={isSelected(p) ? "$color7" : "$color4"}
+                                        circular
+                                        br="100px"
+                                    >
+                                        {p}
+                                    </Button>)}
+                                </XStack>
+                            </Tinted>
+                        }
+                    },
                 }}
             />
         </AdminPage>)
