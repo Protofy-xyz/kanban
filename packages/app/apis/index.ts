@@ -1,8 +1,10 @@
 import {Protofy} from 'protobase'
 import ticketsApi from "./tickets";
+import tagsApi from "./tags";
 
 const autoApis = Protofy("apis", {
-    tickets: ticketsApi
+    tickets: ticketsApi,
+    tags: tagsApi
 })
 
 export default (app, context) => {
