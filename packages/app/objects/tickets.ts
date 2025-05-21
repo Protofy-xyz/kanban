@@ -24,8 +24,7 @@ export const BaseTicketsSchema = Schema.object(Protofy("schema", {
     points: z.number().optional(),
     priority: z.union([z.literal("low"), z.literal("medium"), z.literal("high"), z.literal("urgent")]).optional(),
     createdAt: z.date().datePicker().generate((obj) => moment().toDate()).search().hidden().indexed(),
-    finishedAt: z.date().datePicker().optional().hidden(),
-    archived: z.boolean().optional().hidden().indexed(),
+    finishedAt: z.date().datePicker().optional().hidden()
 }))
 
 //check if any of the fields of the schema has set the id flag

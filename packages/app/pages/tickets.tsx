@@ -16,6 +16,8 @@ import { TicketsSequenceCard } from 'app/components/TicketsSequenceCard'
 import { TicketsSequenceBottom } from 'app/components/TicketsSequenceBottom'
 import { TicketsTagsSelect } from 'app/components/TicketsTagsSelect'
 import { useSearchParams } from 'next/navigation'
+import { DataTable2 } from 'protolib/components/DataTable2'
+import { Chip } from 'protolib/components/Chip'
 
 const Icons = {}
 const isProtected = Protofy("protected", true)
@@ -231,6 +233,18 @@ export default {
                         />
                     },
                 }}
+                columns={DataTable2.columns(
+                    DataTable2.column("title", row => <Text>{row.title}</Text>, "title", null, true, "300px"),
+                    DataTable2.column("description", row => <Text numberOfLines={3} my="5px">{row.description}</Text>, "description", null, true, "400px"),
+                    DataTable2.column("status", row => <Chip bc="$color6" theme={TicketsModel.getStatusTheme(row.status)} text={row.status} />, "status"),
+                    DataTable2.column("tags", row => <XStack gap="$1.5">{row.tags
+                        ? <>
+                            {row.tags?.map(t => <Chip bc={t.color} text={t.name} />)}
+                        </>
+                        : null}</XStack>
+                        , "tags", null, null, "200px"),
+                    DataTable2.column("points", row => row.points ? <Chip theme="purple" text={row.points} /> : null, "points"),
+                )}
             />
         </AdminPage>)
     }
