@@ -5,7 +5,6 @@ import { DataView } from 'protolib/components/DataView'
 import { AdminPage } from 'protolib/components/AdminPage'
 import { Tag } from '@tamagui/lucide-icons'
 import { context } from '../bundles/uiContext'
-import { useRouter } from 'solito/navigation'
 import { EditableText } from 'app/components/ContentEditable'
 import { TicketsModel } from 'app/objects/tickets'
 import { Button, Text, TextArea, useToastController, XStack, Circle } from '@my/ui'
@@ -14,12 +13,14 @@ import { usePageParams } from 'protolib/next'
 import { TicketsSequenceCard } from 'app/components/TicketsSequenceCard'
 import { TicketsSequenceBottom } from 'app/components/TicketsSequenceBottom'
 import { TicketsTagsSelect } from 'app/components/TicketsTagsSelect'
-import { useSearchParams } from 'next/navigation'
+import { useSearchParams, useRouter } from 'next/navigation'
 import { DataTable2 } from 'protolib/components/DataTable2'
 import { Chip } from 'protolib/components/Chip'
 import { ActivityLogs } from 'app/components/ActivityLogs'
 import { CollaboratorsSelector } from 'app/components/CollaboratorsSelector'
 import { CollaboratorImage } from 'app/components/CollaboratorImage'
+import { MultiSelectListPopover } from 'app/components/MultiSelectListPopover'
+import { SelectList } from 'protolib/components/SelectList'
 
 const Icons = {}
 const isProtected = Protofy("protected", true)
@@ -68,11 +69,25 @@ export default {
         const [tagsList, setTagsList] = useState([])
         const [collaboratorsList, setCollaboratorsList] = useState([])
 
+        const router = useRouter()
         const toast = useToastController()
         const { query, push, removePush, mergePush } = usePageParams(pageState)
         const searchParams = useSearchParams()
         const queryTags = searchParams.getAll('tags')
         const selectedTagsData = tagsList.filter(p => queryTags.includes(p.name))
+
+        const onToggleTag = (tag: string) => {
+            const params = new URLSearchParams(searchParams.toString())
+            if (queryTags.includes(tag)) { // remove tag
+                const updatedTags = queryTags.filter(t => t !== tag)
+                params.delete('tags')
+                updatedTags.forEach(t => params.append('tags', t))
+            } else { // add tag
+                params.append('tags', tag)
+            }
+
+            router.push(`?${params.toString()}`)
+        }
 
         const getData = async () => {
             try {
@@ -101,6 +116,7 @@ export default {
             <DataView
                 rowIcon={Tag}
                 sourceUrl={apiUrl}
+                sourceUrlParams={query}
                 initialItems={initialItems}
                 numColumnsForm={2}
                 name="Tickets"
@@ -275,6 +291,38 @@ export default {
                         : null}</XStack>
                         , "collaborators", null, null, "200px")
                 )}
+                extraFilters={
+                    [
+                        {
+                            component: (value, setFilter) => {
+                                return <SelectList
+                                    title={"Collaborator"}
+                                    value={value ?? "no_selected"}
+                                    elements={[{ caption: "All collaborators", value: "no_selected" }].concat(collaboratorsList.map(p => ({ caption: p.username, value: p.username })))}
+                                    onValueChange={val => {
+                                        if (val === "no_selected") {
+                                            setFilter(undefined)
+                                        } else {
+                                            setFilter(val)
+                                        }
+                                    }}
+                                />
+                            },
+                            queryParam: "collaborator"
+                        },
+                        {
+                            component: (value, setFilter) => {
+                                return <MultiSelectListPopover
+                                    list={tagsList.map(t => t.name) ?? []}
+                                    values={queryTags}
+                                    onToggle={onToggleTag}
+                                    triggerProps={{ height: "36px" }}
+                                />
+                            },
+                            queryParam: "tags"
+                        }
+                    ]
+                }
             />
         </AdminPage>)
     }

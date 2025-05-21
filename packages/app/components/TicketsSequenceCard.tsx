@@ -2,6 +2,7 @@ import { YStack, XStack, Text } from "@my/ui"
 import { Briefcase, Text as TextIcon } from "@tamagui/lucide-icons"
 import { TicketsModel } from "app/objects/tickets"
 import { Chip } from "protolib/components/Chip"
+import { CollaboratorImage } from "./CollaboratorImage"
 
 export const TicketsSequenceCard = ({ item, onSelectItem }) => {
     const ticketModel = new TicketsModel(item)
@@ -40,6 +41,11 @@ export const TicketsSequenceCard = ({ item, onSelectItem }) => {
         </XStack>}
         <XStack mt="$2" ai="center" jc="space-between">
             {item.points && <Chip height={"26px"} theme="purple" text={item.points} />}
+            <XStack gap="$2" ai="center">
+                {
+                    ticketModel.get("collaborators")?.map(c => <CollaboratorImage key={c.id?.username ?? " "} username={c.id?.username ?? " "} />)
+                }
+            </XStack>
         </XStack>
     </YStack>
 }

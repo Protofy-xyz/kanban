@@ -71,6 +71,24 @@ export class TicketsModel extends ProtoModel<TicketsModel> {
 
     list(search?, session?, extraData?, params?): TicketsType[] {
         const result = super.list(search, session, extraData, params)
+        if (!result)  return
+
+        if (params?.tags) {
+            const paramsTags = params?.tags.split(",")
+            const ticketHasTag = result?.tags?.some((tag) => paramsTags.includes(tag.name))
+            if (!ticketHasTag) {
+                return
+            }
+        }
+
+        if (params?.collaborator) {
+            const currentCollaborator = params?.collaborator
+            const collabOnThisTicket = result?.collaborators?.find((collab) => collab.id?.username === currentCollaborator)
+            if (!collabOnThisTicket) {
+                return
+            }
+        }
+
         return result
     }
 

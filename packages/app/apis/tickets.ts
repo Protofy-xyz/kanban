@@ -19,6 +19,7 @@ const ticketsAPI = AutoAPI({
     modelType: Objects.tickets,
     initialData: {},
     prefix: prefix,
+    skipDatabaseIndexes: true,
     onBeforeCreate: async (data, session?, req?) => {
         return {
             ...data,
