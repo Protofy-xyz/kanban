@@ -1,6 +1,7 @@
-import { Protofy, Schema, BaseSchema, getLogger, ProtoModel, SessionDataType, z  } from 'protobase'
+import { Protofy, Schema, BaseSchema, getLogger, ProtoModel, SessionDataType, z } from 'protobase'
 import moment from 'moment';
 import { TagsModel } from './tags';
+import { UserExtensionModel } from './userExtension';
 
 const logger = getLogger()
 Protofy("features", {
@@ -10,7 +11,7 @@ Protofy("features", {
 })
 
 export const BaseTicketsSchema = Schema.object(Protofy("schema", {
-	status: z.union([
+    status: z.union([
         z.literal("backlog"),
         z.literal("todo"),
         z.literal("in-progress"),
@@ -21,6 +22,10 @@ export const BaseTicketsSchema = Schema.object(Protofy("schema", {
     title: z.string().size(2).search(),
     tags: z.array(TagsModel.linkTo(data => data.name)).optional().size(2),
     description: z.string().textArea(150).optional().size(2).search(),
+    collaborators: z.array(z.object({
+        id: UserExtensionModel.linkTo(data => data.username).label("id"),
+        weight: z.number().label("weight (amount of work)").optional(),
+    }).displayOptions({ defaultOpen: true })).optional().displayOptions({ defaultOpen: true }),
     points: z.number().optional(),
     priority: z.union([z.literal("low"), z.literal("medium"), z.literal("high"), z.literal("urgent")]).optional(),
     createdAt: z.date().datePicker().generate((obj) => moment().toDate()).search().hidden().indexed(),
@@ -31,14 +36,14 @@ export const BaseTicketsSchema = Schema.object(Protofy("schema", {
 const hasId = Object.keys(BaseTicketsSchema.shape).some(key => BaseTicketsSchema.shape[key]._def.id)
 
 export const TicketsSchema = Schema.object({
-    ...(!hasId? BaseSchema.shape : {}),
+    ...(!hasId ? BaseSchema.shape : {}),
     ...BaseTicketsSchema.shape
 });
 
 export type TicketsType = z.infer<typeof TicketsSchema>;
 
 export class TicketsModel extends ProtoModel<TicketsModel> {
-    constructor(data: TicketsType, session?: SessionDataType, ) {
+    constructor(data: TicketsType, session?: SessionDataType,) {
         super(data, TicketsSchema, session, "Tickets");
     }
 
@@ -49,7 +54,7 @@ export class TicketsModel extends ProtoModel<TicketsModel> {
         })
     }
 
-    create(data?):TicketsModel {
+    create(data?): TicketsModel {
         const result = super.create(data)
         return result
     }
@@ -64,7 +69,7 @@ export class TicketsModel extends ProtoModel<TicketsModel> {
         return result
     }
 
-	list(search?, session?, extraData?, params?): TicketsType[] {
+    list(search?, session?, extraData?, params?): TicketsType[] {
         const result = super.list(search, session, extraData, params)
         return result
     }
@@ -96,7 +101,7 @@ export class TicketsModel extends ProtoModel<TicketsModel> {
                 return "❔"
         }
     }
-    
+
     getPriorityIcon() {
         return TicketsModel.getPriorityIcon(this.get('priority'))
     }

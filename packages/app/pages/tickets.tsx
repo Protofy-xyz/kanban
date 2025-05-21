@@ -18,6 +18,8 @@ import { useSearchParams } from 'next/navigation'
 import { DataTable2 } from 'protolib/components/DataTable2'
 import { Chip } from 'protolib/components/Chip'
 import { ActivityLogs } from 'app/components/ActivityLogs'
+import { CollaboratorsSelector } from 'app/components/CollaboratorsSelector'
+import { CollaboratorImage } from 'app/components/CollaboratorImage'
 
 const Icons = {}
 const isProtected = Protofy("protected", true)
@@ -64,6 +66,7 @@ export default {
 
         const [addCardVisible, setAddCardVisible] = useState("")
         const [tagsList, setTagsList] = useState([])
+        const [collaboratorsList, setCollaboratorsList] = useState([])
 
         const toast = useToastController()
         const { query, push, removePush, mergePush } = usePageParams(pageState)
@@ -71,7 +74,7 @@ export default {
         const queryTags = searchParams.getAll('tags')
         const selectedTagsData = tagsList.filter(p => queryTags.includes(p.name))
 
-        const getTags = async () => {
+        const getData = async () => {
             try {
                 const tagsRes = await API.get("/api/v1/tags")
                 const tags = tagsRes?.data?.items ?? []
@@ -80,10 +83,18 @@ export default {
                 console.error(e)
                 toast.show("Error getting tags", { tint: "red" })
             }
+            try {
+                const accountsRes = await API.get("/api/core/v1/accounts")
+                const accounts = accountsRes?.data?.items ?? []
+                setCollaboratorsList(accounts)
+            } catch (e) {
+                console.error(e)
+                toast.show("Error getting tags", { tint: "red" })
+            }
         }
 
         useEffect(() => {
-            getTags()
+            getData()
         }, [])
 
         return (<AdminPage title="Tickets" pageSession={pageSession}>
@@ -117,6 +128,12 @@ export default {
                     "description": {
                         hideLabel: false,
                         component: textComponent({ placeholder: "Description here..." })
+                    },
+                    "collaborators": {
+                        hideLabel: false,
+                        component: (path, data, setData, mode, originalData, setFormData) => {
+                            return <CollaboratorsSelector data={data} setData={setData} list={collaboratorsList} />
+                        }
                     },
                     "status": {
                         hideLabel: true,
@@ -186,12 +203,12 @@ export default {
                             }
 
                             return <Tinted>
-                                <XStack gap="$2" ai="center" f={1}>
+                                <XStack gap="$2" ai="center" pt="$3" f={1}>
                                     {TicketsModel.getFibonacciList().map((p) => <Button
                                         hoverStyle={{ elevation: 5, scale: 1.01 }} pressStyle={{ elevation: 0.01 }}
                                         onPress={() => onSelect(p)}
                                         bc={isSelected(p) ? "$color7" : "$color4"}
-                                        circular
+                                        height={30}
                                         br="100px"
                                     >
                                         {p}
@@ -251,6 +268,12 @@ export default {
                         : null}</XStack>
                         , "tags", null, null, "200px"),
                     DataTable2.column("points", row => row.points ? <Chip theme="purple" text={row.points} /> : null, "points"),
+                    DataTable2.column("collaborators", row => <XStack gap="$1.5">{row.collaborators
+                        ? <>
+                            {row.collaborators?.map(c => <CollaboratorImage username={c.id?.username} />)}
+                        </>
+                        : null}</XStack>
+                        , "collaborators", null, null, "200px")
                 )}
             />
         </AdminPage>)
