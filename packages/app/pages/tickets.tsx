@@ -11,6 +11,9 @@ import { EditableText } from 'app/components/ContentEditable'
 import { TicketsModel } from 'app/objects/tickets'
 import { Button, Text, TextArea, useToastController, XStack, Circle } from '@my/ui'
 import { Tinted } from 'protolib/components/Tinted'
+import { usePageParams } from 'protolib/next'
+import { TicketsSequenceCard } from 'app/components/TicketsSequenceCard'
+import { TicketsSequenceBottom } from 'app/components/TicketsSequenceBottom'
 
 const Icons = {}
 const isProtected = Protofy("protected", true)
@@ -54,6 +57,11 @@ const textComponent = ({ placeholder = "Text here", ...props }) => (path, data, 
 export default {
     route: Protofy("route", "/admin/tickets"),
     component: ({ pageState, initialItems, pageSession, extraData }: any) => {
+
+        const toast = useToastController()
+        const { query, push, removePush, mergePush } = usePageParams(pageState)
+        const [addCardVisible, setAddCardVisible] = useState("")
+
         return (<AdminPage title="Tickets" pageSession={pageSession}>
             <DataView
                 rowIcon={Tag}
@@ -158,6 +166,41 @@ export default {
                                 </XStack>
                             </Tinted>
                         }
+                    },
+                }}
+                dataSequenceProps={{
+                    getCard: (item) => <TicketsSequenceCard item={item} onSelectItem={(item) => push("item", item.id)} />,
+                    onDragEnd: (data) => {
+                        if (data.error) {
+                            return toast.show(data.message, { tint: "red" })
+                        }
+                    },
+                    getStageContainerProps: (stage) => ({ theme: TicketsModel.getStatusTheme(stage) }),
+                    getStageBottom: (stage) => {
+                        const onCreateTicket = async (ticketTitle) => {
+                            if (ticketTitle == "") return setAddCardVisible("")
+
+                            let newTicket = {
+                                title: ticketTitle,
+                                status: stage,
+                                tags: [],
+                                collaborators: [],
+                            }
+
+                            // if (selectedTagsData.length > 0) {
+                            //     newTicket["tags"] = selectedTagsData
+                            // }
+
+                            await API.post(apiUrl, newTicket)
+                            setAddCardVisible("")
+                        }
+
+                        return <TicketsSequenceBottom
+                            stage={stage}
+                            cardVisible={addCardVisible == stage}
+                            onChangeCardVisible={setAddCardVisible}
+                            onCreate={onCreateTicket}
+                        />
                     },
                 }}
             />

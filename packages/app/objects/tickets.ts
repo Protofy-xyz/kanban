@@ -95,6 +95,10 @@ export class TicketsModel extends ProtoModel<TicketsModel> {
                 return "❔"
         }
     }
+    
+    getPriorityIcon() {
+        return TicketsModel.getPriorityIcon(this.get('priority'))
+    }
 
     static getFibonacciList(): number[] {
         return [1, 2, 3, 5, 8, 13]
