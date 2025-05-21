@@ -5,19 +5,83 @@ import { API, Protofy, getLogger } from "protobase";
 import { Application } from 'express';
 import fs from 'fs'
 import path from "path";
+import moment from "moment";
 
 const root = path.join(process.cwd(), '..', '..')
 const logger = getLogger()
 
 Protofy("type", "AutoAPI")
 Protofy("object", "tickets")
-const {name, prefix} = Objects.tickets.getApiOptions()
+const { name, prefix } = Objects.tickets.getApiOptions()
 
 const ticketsAPI = AutoAPI({
     modelName: name,
     modelType: Objects.tickets,
     initialData: {},
-    prefix: prefix
+    prefix: prefix,
+    onBeforeCreate: async (data, session?, req?) => {
+        return {
+            ...data,
+            lastEditor: session?.user?.id,
+        }
+    },
+    onBeforeUpdate: async (data, req?, session?) => {
+        return {
+            ...data,
+            lastEditor: session?.user?.id,
+        }
+    },
+    transformers: {
+        finishedAtCheck: async (field, e, data, prevData, b) => {
+            if (data.status == "done" && !data.finishedAt) {
+                data.finishedAt = moment().toDate()
+            } else if (data.status != "done") {
+                delete data.finishedAt
+            }
+
+            const editorId = data.lastEditor
+            delete data.lastEditor
+
+            if (editorId) {
+                if (e.eventName == "create") {
+                    if (!data.id) {
+                        data.id = moment().format('YYYYMM-DDHHmm-ssSSS') + '-' + uuidv4().split('-')[0]
+                    }
+                    await API.post("/api/v1/activityLogs", {
+                        ticketId: data.id,
+                        userId: editorId,
+                        type: "create",
+                        payload: data
+                    })
+                }
+                if (e.eventName == "update") {
+                    const changedData = Object.keys(data).reduce((acc, key) => {
+                        let isEqual = false
+                        try {
+                            isEqual = JSON.stringify(data[key]) === JSON.stringify(prevData[key])
+                        } catch (e) { }
+                        if (!isEqual) {
+                            acc[key] = { prev: prevData[key], current: data[key] }
+                        }
+                        return acc
+                    }, {})
+
+                    if (Object.keys(changedData).length > 0) {
+                        await API.post("/api/v1/activityLogs", {
+                            ticketId: data.id,
+                            payload: {
+                                data: data,
+                                changes: changedData
+                            },
+                            userId: editorId,
+                            type: "update"
+                        })
+                    }
+                }
+            }
+            return data
+        }
+    }
 })
 
 const ticketsActions = AutoActions({
@@ -26,7 +90,7 @@ const ticketsActions = AutoActions({
     prefix: prefix
 })
 
-export default Protofy("code", async (app:Application, context: typeof APIContext) => {
+export default Protofy("code", async (app: Application, context: typeof APIContext) => {
     ticketsAPI(app, context)
     ticketsActions(app, context)
     //you can add more apis here, like:
@@ -35,5 +99,5 @@ export default Protofy("code", async (app:Application, context: typeof APIContex
         //you code goes here
         //reply with res.send(...)
     })
-    */      
+    */
 })

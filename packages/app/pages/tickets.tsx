@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Protofy, API } from 'protobase'
-import { PaginatedDataSSR } from 'protolib/lib/SSR'
+import { Protofy, API, z } from 'protobase'
 import { Objects } from '../bundles/objects'
 import { DataView } from 'protolib/components/DataView'
 import { AdminPage } from 'protolib/components/AdminPage'
@@ -18,6 +17,7 @@ import { TicketsTagsSelect } from 'app/components/TicketsTagsSelect'
 import { useSearchParams } from 'next/navigation'
 import { DataTable2 } from 'protolib/components/DataTable2'
 import { Chip } from 'protolib/components/Chip'
+import { ActivityLogs } from 'app/components/ActivityLogs'
 
 const Icons = {}
 const isProtected = Protofy("protected", true)
@@ -100,6 +100,9 @@ export default {
                 pageState={pageState}
                 icons={Icons}
                 hideFilters={false}
+                extraFieldsForms={{
+                    "activity": z.array(z.any()).optional().size(2).after("priority"),
+                }}
                 customFieldsForms={{
                     "title": {
                         hideLabel: true,
@@ -197,6 +200,10 @@ export default {
                             </Tinted>
                         }
                     },
+                    "activity": {
+                        hideLabel: false,
+                        component: (path, data, setData, mode, originalData, setFormData) => <ActivityLogs ticketId={originalData.id} ticket={originalData} pageSession={pageSession} />
+                    }
                 }}
                 dataSequenceProps={{
                     getCard: (item) => <TicketsSequenceCard item={item} onSelectItem={(item) => push("item", item.id)} />,
