@@ -20,6 +20,9 @@ export const TicketsSequenceCard = ({ item, onSelectItem }) => {
         transition='all 0.2s'
         opacity={item.archived ? 0.6 : 1}
     >
+        <XStack gap="$2" mb="$2" flexWrap='wrap' ai="center">
+            {ticketModel?.get("tags")?.map((tag, i) => <Chip bc={tag.color} height="$1" br="$2" px="$2" key={i} text={tag.name} />)}
+        </XStack>
         <Text fos="$4" lineHeight="$1">
             {ticketModel.get("title")}
         </Text>

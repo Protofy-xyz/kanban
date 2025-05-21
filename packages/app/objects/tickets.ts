@@ -1,5 +1,6 @@
 import { Protofy, Schema, BaseSchema, getLogger, ProtoModel, SessionDataType, z  } from 'protobase'
 import moment from 'moment';
+import { TagsModel } from './tags';
 
 const logger = getLogger()
 Protofy("features", {
@@ -18,6 +19,7 @@ export const BaseTicketsSchema = Schema.object(Protofy("schema", {
         z.literal("done")
     ]).defaultValue("backlog").onCreate('finishedAtCheck').onUpdate('finishedAtCheck').size(2).sequence(),
     title: z.string().size(2).search(),
+    tags: z.array(TagsModel.linkTo(data => data.name)).optional().size(2),
     description: z.string().textArea(150).optional().size(2).search(),
     points: z.number().optional(),
     priority: z.union([z.literal("low"), z.literal("medium"), z.literal("high"), z.literal("urgent")]).optional(),

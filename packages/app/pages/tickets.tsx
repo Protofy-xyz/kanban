@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Protofy, API } from 'protobase'
 import { PaginatedDataSSR } from 'protolib/lib/SSR'
 import { Objects } from '../bundles/objects'
@@ -14,6 +14,8 @@ import { Tinted } from 'protolib/components/Tinted'
 import { usePageParams } from 'protolib/next'
 import { TicketsSequenceCard } from 'app/components/TicketsSequenceCard'
 import { TicketsSequenceBottom } from 'app/components/TicketsSequenceBottom'
+import { TicketsTagsSelect } from 'app/components/TicketsTagsSelect'
+import { useSearchParams } from 'next/navigation'
 
 const Icons = {}
 const isProtected = Protofy("protected", true)
@@ -58,9 +60,29 @@ export default {
     route: Protofy("route", "/admin/tickets"),
     component: ({ pageState, initialItems, pageSession, extraData }: any) => {
 
+        const [addCardVisible, setAddCardVisible] = useState("")
+        const [tagsList, setTagsList] = useState([])
+
         const toast = useToastController()
         const { query, push, removePush, mergePush } = usePageParams(pageState)
-        const [addCardVisible, setAddCardVisible] = useState("")
+        const searchParams = useSearchParams()
+        const queryTags = searchParams.getAll('tags')
+        const selectedTagsData = tagsList.filter(p => queryTags.includes(p.name))
+
+        const getTags = async () => {
+            try {
+                const tagsRes = await API.get("/api/v1/tags")
+                const tags = tagsRes?.data?.items ?? []
+                setTagsList(tags)
+            } catch (e) {
+                console.error(e)
+                toast.show("Error getting tags", { tint: "red" })
+            }
+        }
+
+        useEffect(() => {
+            getTags()
+        }, [])
 
         return (<AdminPage title="Tickets" pageSession={pageSession}>
             <DataView
@@ -80,6 +102,12 @@ export default {
                     "title": {
                         hideLabel: true,
                         component: textComponent({ placeholder: "Title here...", fos: "$6", fow: "600" })
+                    },
+                    "tags": {
+                        hideLabel: false,
+                        component: (path, data, setData, mode, originalData, setFormData) => {
+                            return <TicketsTagsSelect data={data} setData={setData} tagsList={tagsList} />
+                        }
                     },
                     "description": {
                         hideLabel: false,
@@ -187,9 +215,9 @@ export default {
                                 collaborators: [],
                             }
 
-                            // if (selectedTagsData.length > 0) {
-                            //     newTicket["tags"] = selectedTagsData
-                            // }
+                            if (selectedTagsData.length > 0) {
+                                newTicket["tags"] = selectedTagsData
+                            }
 
                             await API.post(apiUrl, newTicket)
                             setAddCardVisible("")
