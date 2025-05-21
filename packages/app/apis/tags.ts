@@ -13,10 +13,28 @@ Protofy("type", "AutoAPI")
 Protofy("object", "tags")
 const {name, prefix} = Objects.tags.getApiOptions()
 
+const initialData = {
+    "202504-031251-01251-6599d856": {
+        "name": "bug",
+        "color": "#eb9091",
+        "id": "202504-031251-01251-6599d856"
+    },
+    "202504-031251-27956-226322f2": {
+        "name": "hu",
+        "color": "#5eb0ef",
+        "id": "202504-031251-27956-226322f2"
+    },
+    "202504-031252-05649-15828e7e": {
+        "name": "task",
+        "color": "#5bb98c",
+        "id": "202504-031252-05649-15828e7e"
+    }
+}
+
 const tagsAPI = AutoAPI({
     modelName: name,
     modelType: Objects.tags,
-    initialData: {},
+    initialData: initialData,
     prefix: prefix
 })
 
