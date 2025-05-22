@@ -1,64 +1,34 @@
 <h3 align="center"> 
-<image height="50" src="https://raw.githubusercontent.com/Protofy-xyz/Protofy/assets/logo-protofy.png">
+  <img height="50" src="https://raw.githubusercontent.com/Protofy-xyz/Protofy/assets/logo-protofy.png">
 </h3>
 
+<h2 align="center">Kanban Example – Powered by Protofy</h2>
+
+<p align="center">
+A simple, open-source Kanban board built with <strong>Protofy</strong> as a use case template.<br>
+Use it to explore what's possible, get inspired, or kickstart your own automated task manager.
+</p>
+
 <h4 align="center">
-  <a href="https://github.com/protofy-xyz/protofy/graphs/contributors">
-    <img src="https://img.shields.io/github/contributors-anon/protofy-xyz/protofy?color=yellow&style=flat" alt="contributors" style="height: 20px;">
+  <a href="https://github.com/your-username/kanban-protofy/graphs/contributors">
+    <img src="https://img.shields.io/github/contributors-anon/your-username/kanban-protofy?color=yellow&style=flat" alt="contributors" style="height: 20px;">
   </a>
   <a href="https://opensource.org/licenses/mit">
-    <img src="https://img.shields.io/badge/mit-blue.svg?style=flat&label=license" alt="license" style="height: 20px;">
+    <img src="https://img.shields.io/badge/license-MIT-blue.svg?style=flat" alt="license" style="height: 20px;">
   </a>
   <a href="https://discord.gg/VpeZxMFfYW">
     <img src="https://img.shields.io/badge/discord-7289da.svg?style=flat&logo=discord" alt="discord" style="height: 20px;">
   </a>
 </h4>
 
+---
 
-<h2><p align="center" style="font-size: 20px">AI Driven Machine Automation Platform</p>
-<p align="center" style="font-size:15px">Natural Language Autopilot system for smart and industrial devices</p></h2> 
+## 🧠 What is this?
 
-Protofy is an Open Source Platform designed to automate the control of physical devices and machines using a Large Language Model (LLM) running in a continuous decision loop. 
+This is a **real-world example** of how to use [Protofy](https://github.com/protofy-xyz/protofy), the AI-driven machine automation platform, to build an interactive Kanban board for task management.
 
-An automatic control loop reads sensor states, evaluates rules, and sends a structured prompt to the LLM to decide which actuators, if any, should be triggered. The system provides a full UI for device onboarding, rule configuration, and real-time monitoring
+Check the [getting started](https://github.com/Protofy-xyz/Protofy/blob/main/docs/getting-started.md) guide to run Protofy on your computer, directly with npm or using docker.
 
-Check the [getting started](docs/getting-started.md) guide to run Protofy on your computer, directly with npm or using docker.
+![tickets-view](https://github.com/Protofy-xyz/kanban/blob/main/data/public/tickets-view.png?raw=true)
+![ticket-edit](https://github.com/Protofy-xyz/kanban/blob/main/data/public/ticket-edit.png?raw=true)
 
-![tank-board](https://github.com/Protofy-xyz/Protofy/blob/assets/dashboard/tank.png?raw=true)
-
-![dashboard](https://github.com/Protofy-xyz/Protofy/blob/assets/dashboard/system.png?raw=true)
-
-![sequence](https://github.com/Protofy-xyz/Protofy/blob/assets/pages/sequence-view.png?raw=true)
-
-## 😎 Node-based UI
-
-![codeedit](https://github.com/Protofy-xyz/Protofy/assets/5052882/98c071cf-c934-4891-90e7-ad2d05602aad)
-
-Fine tune the system behavior by using a nodes interface
-
-## 🧰 Connected devices (IoT) support for ESP32 based on ESPHome 
-
-![devices-package](https://github.com/Protofy-xyz/Protofy/blob/assets/device/device-1.gif?raw=true)
-
-Program, deploy and manage connected devices and IoT networks visually, in minutes. 
-
-## 🤖 Ai Assisted
-
-Get help creating rules or managing the system with automatic context transfer and pompt cascading.
-
-Screenshot comming soon...
-
-## 🧭 Roadmap
-
-Coming  soon...
-
-## 📜 License
-Check out the [LICENSE](LICENSE.md) file for details.
-
-## 🙌 Contributing and Community
-Join us at [Discord]("https://discord.gg/VpeZxMFfYW") to ask questions about bugs or specific use cases, share your builds or just discus ideas.
-
-
-## Star History
-
-[![Star History Chart](https://api.star-history.com/svg?repos=Protofy-xyz/Protofy&type=Date)](https://star-history.com/#Protofy-xyz/Protofy&Date)
