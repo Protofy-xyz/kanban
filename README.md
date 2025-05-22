@@ -32,3 +32,5 @@ Check the [getting started](https://github.com/Protofy-xyz/Protofy/blob/main/doc
 ![tickets-view](https://github.com/Protofy-xyz/kanban/blob/main/data/public/tickets-view.png?raw=true)
 ![ticket-edit](https://github.com/Protofy-xyz/kanban/blob/main/data/public/ticket-edit.png?raw=true)
 
+## 🙌 Contributing and Community
+Join us at [Discord]("https://discord.gg/VpeZxMFfYW") to ask questions about bugs or specific use cases, share your builds or just discus ideas.
